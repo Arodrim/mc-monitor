@@ -5,6 +5,10 @@ on:
     - cron: '*/5 * * * *'   # cada 5 minutos (repo público = minutos gratis ilimitados)
   workflow_dispatch:         # permite correrlo manualmente para probar
 
+concurrency:
+  group: mc-monitor
+  cancel-in-progress: false   # si se dispara dos veces, la segunda espera a la primera
+
 permissions:
   contents: write            # necesario para poder guardar state.json
 
@@ -36,4 +40,5 @@ jobs:
           git config user.email "mc-monitor-bot@users.noreply.github.com"
           git add state.json
           git diff --staged --quiet || git commit -m "Actualizar estado del monitor"
+          git pull --rebase origin main
           git push
